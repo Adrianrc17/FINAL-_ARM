@@ -1,4 +1,7 @@
 #include "serialUart.h"
+#include "motorDriver/motorDriver.h"
+#include "serialUart/serialUart.h"
+
 
 void inicializarUart(void)
 {
@@ -39,8 +42,23 @@ void enviarPalabra(uint8_t cadena[])
     nuevaLinea();
 }
 
+
 /*
 Implementar las funciones: 
 existeCaracter()
 leerCaracter()
 */
+int existeCaracter(void) {
+    if ((USART1->SR & USART_SR_RXNE) != 0) {  // Verifica si el bit 5 (RXNE) del registro SR del USART1 es 1
+        return 1;  // Si es 1, retorna 1
+    } else {
+        return 0;  // Si no es 1, retorna 0
+    }
+}
+
+uint8_t leerCaracter(void) {
+    while ((USART1->SR & USART_SR_RXNE) == 0) {  // Espera mientras el bit 5 (RXNE) del registro SR del USART1 sea 0
+        // No hace nada, solo espera
+    }
+    return (uint8_t)(USART1->DR & 0xFF);  // Cuando el bit 5 (RXNE) del registro SR del USART1 sea 1, retorna los 8 bits menos significativos del registro DR del USART1
+}
